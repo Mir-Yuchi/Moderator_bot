@@ -8,6 +8,7 @@ from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from tgbot.config import load_config
 from tgbot.filters import register_all_filters
 from tgbot.handlers import register_all_handlers
+from tgbot.utils.db import AsyncDbManager
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,8 @@ logger = logging.getLogger(__name__)
 async def main():
     logging.basicConfig(
         level=logging.INFO,
-        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - '
+               u'%(name)s - %(message)s',
     )
     logger.info("Starting bot")
     config = load_config(".env")
@@ -25,6 +27,7 @@ async def main():
     dp = Dispatcher(bot, storage=storage)
 
     bot['config'] = config
+    AsyncDbManager(config.db.async_url())
     register_all_filters(dp)
     register_all_handlers(dp)
 
