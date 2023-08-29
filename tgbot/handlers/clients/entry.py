@@ -10,16 +10,17 @@ async def user_start(message: Message):
             'Привет! Это бот-антиспам для вашей группы🛡️\n'
             'Чтобы меня использовать купите подписку(или воспользуйтесь '
             'бесплатным), чтобы узнать подробнее об установке бота на ваш чат '
-            'наберите команду /' + Commands.howto.name + '\nЧтобы подробнее узнать'
-                                                         ' о моих возможностях наберите команду /' + Commands.features.name
+            'наберите команду /' + Commands.howto.name +
+            '\nЧтобы подробнее узнать о моих возможностях наберите команду /'
+            + Commands.features.name
     )
     await message.reply(txt, reply_markup=ReplyKeyboardRemove())
 
 
 async def features(message: Message):
     inner = (
-        '\n\nЧтобы узнать о возможностях бота, набери команду /'
-        + Commands.fdetail.name
+            '\n\nЧтобы узнать о возможностях бота, набери команду /'
+            + Commands.fdetail.name
     )
     await message.answer('Фичи этого бота 💣💣💣\n\n' + '\n'.join(
         load_bot_feature_names()
@@ -61,5 +62,6 @@ def register_entry_handlers(dp: Dispatcher):
         commands_prefix='!/', chat_type=ChatType.PRIVATE
     )
     dp.register_message_handler(
-        features_detail,
+        features_detail, commands=[Commands.fdetail.name], state='*',
+        commands_prefix='!/', chat_type=ChatType.PRIVATE
     )
