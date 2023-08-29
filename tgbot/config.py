@@ -54,6 +54,14 @@ class PostgresDbConfig(DbConfig):
         )
 
 
+@dataclass(frozen=True)
+class RedisDbConfig(DbConfig):
+    database: int = 1
+
+    def sync_url(self):
+        return f'redis://{self.host}:{self.port}/{self.database}'
+
+
 def load_db_config(path: str | Path = None) -> PostgresDbConfig:
     env = Env()
     env.read_env(path)
@@ -63,6 +71,16 @@ def load_db_config(path: str | Path = None) -> PostgresDbConfig:
         password=env.str('DB_PASSWORD'),
         user=env.str('DB_USER'),
         database=env.str('DB_NAME')
+    )
+
+
+def load_redis_config(path: str | Path = None) -> RedisDbConfig:
+    env = Env()
+    env.read_env(path)
+    return RedisDbConfig(
+        env.str('REDIS_HOST'),
+        env.str('REDIS_PORT'),
+        env.str('REDIS_DB'),
     )
 
 

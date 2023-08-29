@@ -1,4 +1,4 @@
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
 
 from sqlalchemy import create_engine
 import sqlalchemy.ext.asyncio as sa_async
@@ -36,7 +36,7 @@ class AsyncDbManager(metaclass=Singleton):
         self.engine = sa_async.create_async_engine(db_dsn, echo=echo)
         self.session = sa_async.async_sessionmaker(self.engine)
 
-    @contextmanager
+    @asynccontextmanager
     async def db_session(self) -> sa_async.AsyncSession:
         try:
             async with self.session() as session:

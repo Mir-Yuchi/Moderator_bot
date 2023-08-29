@@ -1,3 +1,4 @@
+import sys
 from logging.config import fileConfig
 from pathlib import Path
 
@@ -6,8 +7,16 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from tgbot.config import load_db_config
-from tgbot.models import BASE
+from config import load_db_config, Miscellaneous
+
+misc = Miscellaneous()
+sys.path.append(misc.BASE_DIR.__str__())
+
+import models.bot as bot_models
+import models.client as client_models
+import models.features as features_models
+import models.tariffs as tariffs_models
+from models import BASE
 
 config = context.config
 
