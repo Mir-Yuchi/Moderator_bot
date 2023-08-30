@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from . import BASE, AsyncBaseModelMixin
 from tgbot.data.bot_features import FeaturesList
-from ..interfaces.features import BotFeatureInfo
+from tgbot.interfaces.features import BotFeatureInfo
 
 
 class Features(BASE, AsyncBaseModelMixin):

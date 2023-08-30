@@ -13,7 +13,6 @@ class Tariff(BASE, AsyncBaseModelMixin):
     sum: Mapped[int]
     limitation_days: Mapped[int]
     groups_count: Mapped[int]
-    free: Mapped[bool] = mapped_column(default=False)
 
 
 class TariffFeature(BASE, AsyncBaseModelMixin):

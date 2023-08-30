@@ -12,7 +12,8 @@ async def user_start(message: Message):
             'бесплатным), чтобы узнать подробнее об установке бота на ваш чат '
             'наберите команду /' + Commands.howto.name +
             '\nЧтобы подробнее узнать о моих возможностях наберите команду /'
-            + Commands.features.name
+            + Commands.features.name + '\nВ любой непонятной ситуации' +
+            'наберите команду /' + Commands.reboot.name
     )
     await message.reply(txt, reply_markup=ReplyKeyboardRemove())
 

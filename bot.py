@@ -49,8 +49,12 @@ async def main():
 
     # start
     try:
+        for admin in config.tg_bot.admin_ids:
+            await bot.send_message(admin, 'Бот запустился')
         await dp.start_polling()
     finally:
+        for admin in config.tg_bot.admin_ids:
+            await bot.send_message(admin, 'Бот отановился')
         await dp.storage.close()
         await dp.storage.wait_closed()
         session = await bot.get_session()

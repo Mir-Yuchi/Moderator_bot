@@ -1,6 +1,9 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
+from aiogram.types import ReplyKeyboardRemove
 from aiogram.utils.markdown import hcode
+
+from tgbot.data.commands import Commands
 
 
 async def bot_echo(message: types.Message):
@@ -9,7 +12,6 @@ async def bot_echo(message: types.Message):
         "Сообщение:",
         message.text
     ]
-
     await message.answer('\n'.join(text))
 
 
@@ -21,6 +23,14 @@ async def bot_echo_all(message: types.Message, state: FSMContext):
         hcode(message.text)
     ]
     await message.answer('\n'.join(text))
+
+
+async def reboot_bot(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer(
+        'Перезапустил бота, нажмите заново на /start',
+        reply_markup=ReplyKeyboardRemove()
+    )
 
 
 def register_echo(dp: Dispatcher):

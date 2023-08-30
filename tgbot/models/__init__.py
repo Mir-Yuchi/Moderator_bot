@@ -23,20 +23,27 @@ class BASE(DeclarativeBase):
 class AsyncBaseModelMixin:
 
     @classmethod
-    def filter(cls, stmt: Union[sa.Select, sa.Update, sa.Delete],
-               filter_data: dict):
+    def filter_stmt(cls, stmt: Union[sa.Select, sa.Update, sa.Delete],
+                    filter_data: dict):
         for key, value in filter_data.items():
             split_field = key.split('__')
             if len(split_field) < 2:
-                stmt.where(getattr(cls, key) == value)
+                stmt = stmt.where(getattr(cls, key) == value)
         return stmt
+
+    @classmethod
+    async def get_one(cls, session: AsyncSession, filter_data: dict):
+        stmt = sa.select(cls)
+        stmt = cls.filter_stmt(stmt, filter_data)
+        result = await session.execute(stmt)
+        return result.scalars().first()
 
     @classmethod
     async def get_all(cls, session: AsyncSession,
                       filter_data: dict | None = None) -> list:
         query = sa.select(cls)
         if filter_data:
-            query = cls.filter(query, filter_data)
+            query = cls.filter_stmt(query, filter_data)
         result = await session.execute(query)
         return result.scalars().all()  # type: ignore
 
@@ -56,10 +63,11 @@ class AsyncBaseModelMixin:
             .returning(cls)
         )
         if filter_data:
-            stmt = cls.filter(stmt, filter_data)
+            stmt = cls.filter_stmt(stmt, filter_data)
         result = await session.execute(stmt)
         obj: cls | None = result.scalars().first()
         await session.commit()
+        await session.refresh(obj)
         return obj
 
     @classmethod
@@ -72,3 +80,10 @@ class AsyncBaseModelMixin:
         session.add_all(obj_list)
         await session.commit()
         return obj_list
+
+    @classmethod
+    async def delete(cls, session: AsyncSession, delete_filter: dict):
+        stmt = sa.delete(cls)
+        stmt = cls.filter_stmt(stmt, delete_filter)
+        await session.execute(stmt)
+        await session.commit()
