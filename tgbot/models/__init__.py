@@ -87,3 +87,15 @@ class AsyncBaseModelMixin:
         stmt = cls.filter_stmt(stmt, delete_filter)
         await session.execute(stmt)
         await session.commit()
+
+    @classmethod
+    async def delete_by_id_in(cls, session: AsyncSession,
+                              field_list: list[Any], field_name: str,
+                              not_in: bool = False):
+        stmt = sa.delete(cls)
+        if not_in:
+            stmt = stmt.where(getattr(cls, field_name).not_in(field_list))
+        else:
+            stmt = stmt.where(getattr(cls, field_name).in_(field_list))
+        await session.execute(stmt)
+        await session.commit()

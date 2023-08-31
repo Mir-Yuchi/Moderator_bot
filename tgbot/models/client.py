@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import sqlalchemy as sa
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -27,3 +29,7 @@ class ClientSubscribe(BASE, AsyncBaseModelMixin):
         f'{Tariff.__tablename__}.id'
     ))
     auto_credit: Mapped[bool] = mapped_column(default=False)
+    buy_date: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    def expired(self, days: int | float):
+        return self.buy_date + timedelta(days) < datetime.utcnow()

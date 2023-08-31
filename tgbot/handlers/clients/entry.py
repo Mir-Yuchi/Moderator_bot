@@ -1,11 +1,30 @@
 from aiogram import Dispatcher
-from aiogram.types import Message, ReplyKeyboardRemove, ChatType
+from aiogram.types import (
+    Message, ChatType, ReplyKeyboardRemove
+)
 
+from tgbot.config import Config
 from tgbot.data.commands import Commands
+from tgbot.models.client import BotClient
+from tgbot.utils.db import AsyncDbManager
 from tgbot.utils.text import load_bot_feature_names, bot_feature_detail_info
 
 
 async def user_start(message: Message):
+    config: Config = message.bot['config']
+    if message.from_user.id not in config.tg_bot.admin_ids:
+        async with AsyncDbManager().db_session() as session:
+            client = await BotClient.get_one(
+                session, {'tg_id': message.from_user.id}
+            )
+            if not client:
+                await BotClient.create(
+                    session,
+                    {
+                        'tg_id': message.from_user.id,
+                        'username': message.from_user.username
+                    }
+                )
     txt = (
             'Привет! Это бот-антиспам для вашей группы🛡️\n'
             'Чтобы меня использовать купите подписку(или воспользуйтесь '
@@ -20,8 +39,8 @@ async def user_start(message: Message):
 
 async def features(message: Message):
     inner = (
-            '\n\nЧтобы узнать о возможностях бота, набери команду /'
-            + Commands.fdetail.name
+            '\n\nЧтобы подробно узнать о каждой возможности бота, '
+            'набери команду /' + Commands.fdetail.name
     )
     await message.answer('Фичи этого бота 💣💣💣\n\n' + '\n'.join(
         load_bot_feature_names()
@@ -37,14 +56,14 @@ async def features_detail(message: Message):
 async def howto_setup(message: Message):
     txt = (
         'Как установить бота на вашу группу❓\n',
-        '1. Купите подписку(или используйте бесплатную)',
-        '2. Привяжите меня к группе в настройках(нажмите кнопку '
-        'добавить группу в меню)',
-        '3. Сделайте меня админом(дайте все права кроме анонимности)',
-        '4. Если чат не отображается после нажатия на кнопку мои группы '
-        'попробуйте в том чате набрать команду /' + Commands.add.value,
-        '5. И всё! После этого чат будет отображаться в ваших чатах, и можете '
-        'наслаждаться чистым чатом 😇'
+        '1. Купите подписку',
+        '2. Добавьте меня в группу и сделайте админом('
+        'дайте все права кроме анонимности)',
+        '3. Наберите в чате команду /' + Commands.add.name,
+        '4. И всё! После этого чат будет отображаться в ваших чатах, и можете '
+        'наслаждаться чистым чатом 😇',
+        '<strong>❗❗❗Чтобы посмотреть список ваших групп в боте нажмите '
+        'на кнопку Мои группы❗❗❗</>'
     )
     await message.answer('\n'.join(txt))
 

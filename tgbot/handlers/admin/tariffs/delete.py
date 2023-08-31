@@ -7,7 +7,8 @@ from aiogram.types import (
 from tgbot.data.commands import ButtonCommands
 from tgbot.keyboards.inline import yes_or_no, make_tariff_inline_kb
 from tgbot.misc.states import DeleteTariffState
-from tgbot.models.tariffs import Tariff
+from tgbot.models.client import ClientSubscribe
+from tgbot.models.tariffs import Tariff, TariffFeature
 from tgbot.utils.db import AsyncDbManager
 
 
@@ -43,9 +44,15 @@ async def confirm_delete_tariff_callback(
 ):
     match callback.data:
         case 'yes':
+            async with state.proxy() as data:
+                field_id = data.get('callback')
             async with AsyncDbManager().db_session() as session:
-                async with state.proxy() as data:
-                    field_id = data.pop('callback')
+                await TariffFeature.delete_by_id_in(
+                    session, [field_id], 'tariff_id'
+                )
+                await ClientSubscribe.delete_by_id_in(
+                    session, [field_id], 'tariff_id'
+                )
                 await Tariff.delete(session, {'id': field_id})
             await callback.bot.send_message(
                 callback.from_user.id,

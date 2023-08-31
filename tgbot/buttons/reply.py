@@ -1,4 +1,4 @@
-from aiogram.types import KeyboardButton
+from aiogram.types import KeyboardButton, KeyboardButtonRequestChat
 
 from tgbot.data.commands import ButtonCommands
 

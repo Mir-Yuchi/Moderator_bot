@@ -1,9 +1,7 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import ReplyKeyboardRemove
+from aiogram.types import ReplyKeyboardRemove, ChatType
 from aiogram.utils.markdown import hcode
-
-from tgbot.data.commands import Commands
 
 
 async def bot_echo(message: types.Message):
@@ -34,6 +32,7 @@ async def reboot_bot(message: types.Message, state: FSMContext):
 
 
 def register_echo(dp: Dispatcher):
-    dp.register_message_handler(bot_echo)
+    dp.register_message_handler(bot_echo, chat_type=ChatType.PRIVATE)
     dp.register_message_handler(bot_echo_all, state="*",
-                                content_types=types.ContentTypes.ANY)
+                                content_types=types.ContentTypes.ANY,
+                                chat_type=ChatType.PRIVATE)

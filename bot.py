@@ -9,7 +9,8 @@ from redis.asyncio import Redis
 from tgbot.config import load_config, load_redis_config
 from tgbot.filters import register_all_filters
 from tgbot.handlers import register_all_handlers
-from tgbot.models.features import define_initial_features_data
+from tgbot.models.db_handlers.bot import load_bot_settings_redis
+from tgbot.models.db_handlers.features import define_initial_features_data
 from tgbot.utils.bot import load_bot_commands
 from tgbot.utils.db import AsyncDbManager
 
@@ -44,17 +45,19 @@ async def main():
         config.db.async_url()
     ).db_session() as db_session:
         await define_initial_features_data(db_session)
+        await load_bot_settings_redis(db_session, redis_engine)
     register_all_filters(dp)
     register_all_handlers(dp)
 
     # start
     try:
-        for admin in config.tg_bot.admin_ids:
-            await bot.send_message(admin, 'Бот запустился')
+        # for admin in config.tg_bot.admin_ids:
+        #     await bot.send_message(admin, 'Бот запустился')
         await dp.start_polling()
     finally:
-        for admin in config.tg_bot.admin_ids:
-            await bot.send_message(admin, 'Бот отановился')
+        # for admin in config.tg_bot.admin_ids:
+        #     await bot.send_message(admin, 'Бот отановился')
+        await redis_engine.close()
         await dp.storage.close()
         await dp.storage.wait_closed()
         session = await bot.get_session()
