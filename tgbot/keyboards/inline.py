@@ -3,6 +3,7 @@ from typing import Any
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from tgbot.buttons.inline import YES, NO
+from tgbot.models.client import BotClient
 from tgbot.models.tariffs import Tariff
 
 
@@ -17,6 +18,16 @@ def make_tariff_inline_kb(tariffs: list[Tariff]) -> InlineKeyboardMarkup:
     for tariff in tariffs:
         btn = InlineKeyboardButton(
             tariff.name, callback_data=tariff.id.__str__()
+        )
+        keyboard.add(btn)
+    return keyboard
+
+
+def make_client_inline_kb(clients: list[BotClient]) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup()
+    for user in clients:
+        btn = InlineKeyboardButton(
+            user.full_name, callback_data=user.tg_id.__str__()
         )
         keyboard.add(btn)
     return keyboard

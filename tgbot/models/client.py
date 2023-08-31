@@ -13,6 +13,7 @@ class BotClient(BASE, AsyncBaseModelMixin):
 
     tg_id: Mapped[int] = mapped_column(sa.BIGINT, primary_key=True)
     username: Mapped[str] = mapped_column(nullable=True)
+    full_name: Mapped[str] = mapped_column(server_default='Пользователь')
     balance: Mapped[int] = mapped_column(default=0)
 
 

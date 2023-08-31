@@ -4,19 +4,28 @@ from tgbot.data.bot_features import FeaturesList
 from tgbot.data.db_field_names import TARIFF_FIELD_NAMES
 
 
-def numerate_iterable(iterable: Iterable, start: int = 1):
+def numerate_iterable(iterable: Iterable, start: int = 1) -> tuple:
     for idx, value in enumerate(iterable, start=start):
         yield idx, value
 
 
-def load_bot_feature_names():
+def numerate_iterable_txt(iterable: Iterable) -> str:
+    for idx, value in numerate_iterable(iterable):
+        yield f'<strong>{idx}</strong>: {value}'
+
+
+def mention_user_html(tg_id: int, full_name: str) -> str:
+    return f'<a href="tg://user?id={tg_id}">{full_name}</a>'
+
+
+def load_bot_feature_names() -> str:
     for idx, numerated_enum in numerate_iterable(
         FeaturesList.__members__.values(),
     ):
         yield f'<strong>{idx}: {numerated_enum.value.info.value.name}</strong>'
 
 
-def bot_feature_detail_info():
+def bot_feature_detail_info() -> str:
     for feature in FeaturesList.__members__.values():
         yield (f'<strong>⚔️ {feature.value.info.value.name}</strong>\n'
                f'{feature.value.info.value.title}')

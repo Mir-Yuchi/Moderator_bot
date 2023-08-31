@@ -22,7 +22,8 @@ async def user_start(message: Message):
                     session,
                     {
                         'tg_id': message.from_user.id,
-                        'username': message.from_user.username
+                        'username': message.from_user.username,
+                        'full_name': message.from_user.full_name
                     }
                 )
     txt = (
