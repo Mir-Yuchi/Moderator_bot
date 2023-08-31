@@ -10,6 +10,8 @@ from tgbot.utils.text import numerate_iterable_txt, mention_user_html
 async def client_list(message: Message):
     async with AsyncDbManager().db_session() as session:
         clients: list[BotClient] = await BotClient.get_all(session)
+    if not clients:
+        await message.answer('пользователей нет')
     txt = []
     for client in clients:
         txt.append(mention_user_html(client.tg_id, client.full_name))

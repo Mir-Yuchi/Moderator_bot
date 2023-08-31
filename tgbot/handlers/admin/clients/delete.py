@@ -14,6 +14,8 @@ from tgbot.utils.db import AsyncDbManager
 async def delete_user_command(message: Message):
     async with AsyncDbManager().db_session() as session:
         clients = await BotClient.get_all(session)
+    if not clients:
+        await message.answer('пользователей нет')
     keyboard = make_client_inline_kb(clients)
     await message.answer(
         'Отлично! Выберите кого удалить',
