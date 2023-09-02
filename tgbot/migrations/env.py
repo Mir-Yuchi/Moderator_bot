@@ -12,9 +12,9 @@ from config import load_db_config, Miscellaneous
 misc = Miscellaneous()
 sys.path.append(misc.BASE_DIR.__str__())
 
+import models.admin as admin_models
 import models.bot as bot_models
 import models.client as client_models
-import models.features as features_models
 import models.tariffs as tariffs_models
 from models import BASE
 

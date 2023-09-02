@@ -6,7 +6,7 @@ from redis.asyncio import Redis
 from tgbot.data.commands import ButtonCommands
 from tgbot.keyboards.inline import make_client_inline_kb, yes_or_no
 from tgbot.misc.states import DeleteUserState
-from tgbot.models.bot import UserTgGroupBot, RedisTgBotSettings
+from tgbot.models.bot import RedisTgBotSettings
 from tgbot.models.client import BotClient, ClientSubscribe
 from tgbot.utils.db import AsyncDbManager
 
@@ -16,6 +16,7 @@ async def delete_user_command(message: Message):
         clients = await BotClient.get_all(session)
     if not clients:
         await message.answer('пользователей нет')
+        return
     keyboard = make_client_inline_kb(clients)
     await message.answer(
         'Отлично! Выберите кого удалить',
@@ -47,15 +48,17 @@ async def confirm_delete_user_callback(
             async with state.proxy() as data:
                 field_id = data.get('callback')
             async with AsyncDbManager().db_session() as session:
-                await ClientSubscribe.delete(session, {'client_id': field_id})
-                tg_bots: list[UserTgGroupBot] = await UserTgGroupBot.get_all(
-                    session, {'user_id': field_id}
+                user_subs: list[ClientSubscribe] = (
+                    await ClientSubscribe.get_all(
+                        session, {'client_id': field_id}
+                    )
                 )
-                await UserTgGroupBot.delete(session, {'user_id': field_id})
+                await ClientSubscribe.delete(session, {'client_id': field_id})
                 await BotClient.delete(session, {'tg_id': field_id})
-            for bot in tg_bots:
+            for subscribe in user_subs:
                 redis_db_obj = RedisTgBotSettings(
-                    bot.user_id, bot.group_id, bot.bot_settings
+                    subscribe.client_id, subscribe.group_id,
+                    subscribe.bot_settings
                 )
                 await redis.delete(redis_db_obj.db_settings_key)
             await callback.bot.send_message(

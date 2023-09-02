@@ -32,9 +32,11 @@ class AsyncBaseModelMixin:
         return stmt
 
     @classmethod
-    async def get_one(cls, session: AsyncSession, filter_data: dict):
+    async def get_one(cls, session: AsyncSession,
+                      filter_data: dict | None = None):
         stmt = sa.select(cls)
-        stmt = cls.filter_stmt(stmt, filter_data)
+        if filter_data:
+            stmt = cls.filter_stmt(stmt, filter_data)
         result = await session.execute(stmt)
         return result.scalars().first()
 
@@ -48,7 +50,7 @@ class AsyncBaseModelMixin:
         return result.scalars().all()  # type: ignore
 
     @classmethod
-    async def create(cls, session: AsyncSession, data: dict) -> object:
+    async def create(cls, session: AsyncSession, data: dict):
         obj = cls(**data)
         session.add(obj)
         await session.commit()

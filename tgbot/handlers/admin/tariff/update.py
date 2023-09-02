@@ -79,9 +79,8 @@ async def confirm_update_callback(callback: CallbackQuery, state: FSMContext):
                 callback.from_user.id,
                 'Успешно обновил тариф\n\n' + (
                     confirm_create_tariff(
-                        tariff.name, tariff.limitation_days,
-                        tariff.groups_count, tariff.sum,
-                        ('<strong>Обновленные данные</strong>\n',)
+                        tariff.limitation_days, tariff.sum,
+                        (f'<strong>🌟 {tariff.name} 🌟</strong>\n',)
                     )
                 ) if tariff else '!'
             )

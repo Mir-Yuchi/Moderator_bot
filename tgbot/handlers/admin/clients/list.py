@@ -12,6 +12,7 @@ async def client_list(message: Message):
         clients: list[BotClient] = await BotClient.get_all(session)
     if not clients:
         await message.answer('пользователей нет')
+        return
     txt = []
     for client in clients:
         txt.append(mention_user_html(client.tg_id, client.full_name))

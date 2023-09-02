@@ -32,15 +32,12 @@ def bot_feature_detail_info() -> str:
 
 
 def confirm_create_tariff(
-    tariff_name: str, limitation_days: int,
-    groups_count: int, tariff_sum: int = 0,
-    extra_txt: tuple = ()
+    limitation_days: int,
+    tariff_sum: int = 0, extra_txt: tuple = ()
 ) -> str:
     txt = extra_txt + (
-        TARIFF_FIELD_NAMES['name'] + ': ' + tariff_name,
         TARIFF_FIELD_NAMES['limitation_days'] + ': ' +
         limitation_days.__str__(),
-        TARIFF_FIELD_NAMES['groups_count'] + ': ' + groups_count.__str__(),
         TARIFF_FIELD_NAMES['sum'] + ': ' +
         ('Бесплатно 🆓' if not tariff_sum else tariff_sum.__str__() + '\u20BD')
     )

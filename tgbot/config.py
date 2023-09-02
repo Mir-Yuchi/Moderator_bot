@@ -7,6 +7,7 @@ from environs import Env
 @dataclass(frozen=True)
 class Miscellaneous:
     BASE_DIR: Path = Path(__file__).parent.parent
+    TARIFF_TRIAL_DAYS: int = 5
 
 
 @dataclass(frozen=True)
