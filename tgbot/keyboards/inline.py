@@ -1,9 +1,11 @@
 from typing import Any
 
+from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from tgbot.buttons.inline import YES, NO
-from tgbot.models.client import BotClient
+from tgbot.models.admin import AdminGroupBot
+from tgbot.models.client import BotClient, ClientSubscribe
 from tgbot.models.tariffs import Tariff
 
 
@@ -46,4 +48,16 @@ def make_inline_kb_from_dict(
             keyboard.add(InlineKeyboardButton(
                 key.__str__(), callback_data=value.__str__()
             ))
+    return keyboard
+
+
+async def make_groups_inline_kb(
+    bot: Bot,
+    groups: list[AdminGroupBot | ClientSubscribe]
+) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup()
+    for group in groups:
+        chat = await bot.get_chat(group.group_id)
+        btn = InlineKeyboardButton(chat.full_name, callback_data=str(chat.id))
+        keyboard.add(btn)
     return keyboard

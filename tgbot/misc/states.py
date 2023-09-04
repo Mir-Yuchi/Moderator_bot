@@ -11,3 +11,14 @@ class ChangeTariffState(StatesGroup):
     tariff_field = State()
     field_value = State()
     confirm = State()
+
+
+class GroupsMenuState(StatesGroup):
+    choose_group = State()
+    group_actions = State()
+
+
+class SubscribePaymentState(StatesGroup):
+    group_id = State()
+    invoice = State()
+    finish = State()

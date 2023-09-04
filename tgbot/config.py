@@ -28,6 +28,8 @@ class TgBot:
     token: str
     admin_ids: list[int]
     use_redis: bool
+    SUBSCRIBE_PAYMENT_PROVIDER_TOKEN: str
+    PAYMENTS_CURRENCY: str = 'RUB'
 
 
 @dataclass(frozen=True)
@@ -89,9 +91,13 @@ def load_tgbot_config(path: str | Path = None) -> TgBot:
     env = Env()
     env.read_env(path)
     return TgBot(
-        token=env.str("BOT_TOKEN"),
-        admin_ids=list(map(int, env.str("ADMINS").split(","))),
-        use_redis=env.bool("USE_REDIS"),
+        token=env.str('BOT_TOKEN'),
+        admin_ids=list(map(int, env.str('ADMINS').split(','))),
+        use_redis=env.bool('USE_REDIS'),
+        SUBSCRIBE_PAYMENT_PROVIDER_TOKEN=env.str(
+            'SUBSCRIBE_PAYMENT_PROVIDER_TOKEN'
+        ),
+        PAYMENTS_CURRENCY=env.str('PAYMENTS_CURRENCY')
     )
 
 
