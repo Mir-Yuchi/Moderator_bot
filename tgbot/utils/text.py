@@ -2,6 +2,7 @@ from typing import Iterable
 
 from tgbot.data.bot_features import FeaturesList
 from tgbot.data.db_field_names import TARIFF_FIELD_NAMES
+from tgbot.data.letters import REPLACE_LETTERS
 
 
 def numerate_iterable(iterable: Iterable, start: int = 1) -> tuple:
@@ -42,3 +43,12 @@ def confirm_create_tariff(
         ('Бесплатно 🆓' if not tariff_sum else tariff_sum.__str__() + '\u20BD')
     )
     return '\n'.join(txt)
+
+
+def replace_word_letters(word: str) -> str:
+    for key, value in REPLACE_LETTERS.items():
+        for letter in value:
+            for phr in word:
+                if letter == phr:
+                    word = word.replace(phr, key)
+    return word

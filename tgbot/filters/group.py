@@ -15,7 +15,6 @@ class IsSubscribeActiveFilter(BoundFilter):
         redis: Redis = message.bot['redis_db']
         model = RedisTgBotSettings(message.chat.id)
         settings: dict | None = await model.load_settings(redis)
-        print(settings)
         if not settings or not self.subscribe_active:
             return False
         return True

@@ -130,7 +130,19 @@ class SilenceMode(Enum):
     )
 
 
+class ObsceneDelete(Enum):
+    info = BotFeatureInfo(
+        'Антимат ♻️',
+        'Очистка нецензурной лексики(маты)'
+        '\nDefault: Включено'
+    )
+    settings = FeatureSettings(
+        True
+    )
+
+
 class FeaturesList(Enum):
     anti_flood = AntiFlood
     meta_info_delete = MetaInfoDelete
     silence_mode = SilenceMode
+    obscene_delete = ObsceneDelete
