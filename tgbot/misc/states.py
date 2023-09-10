@@ -22,3 +22,9 @@ class SubscribePaymentState(StatesGroup):
     group_id = State()
     invoice = State()
     finish = State()
+
+
+class FeatureSettingsState(StatesGroup):
+    group_id = State()
+    feature_settings = State()
+    set_settings = State()

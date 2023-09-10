@@ -141,7 +141,7 @@ async def result_payment(message: Message, state: FSMContext):
     await state.finish()
     redis: Redis = message.bot['redis_db']
     rdb_obj = RedisTgBotSettings(
-        message.from_user.id, group_id, settings
+        group_id, settings
     )
     await rdb_obj.set_settings(redis)
     await message.answer(

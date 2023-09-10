@@ -1,7 +1,10 @@
 from enum import Enum
 
-from tgbot.interfaces.features import BotFeatureInfo
-import tgbot.interfaces.features.antiflood as af_feat
+from tgbot.interfaces.features import BotFeatureInfo, FeatureSettings
+from tgbot.interfaces.features.antiflood import (
+    AntiFloodSettings,
+    WorkModeChoice
+)
 
 
 # FEATURES = [
@@ -98,12 +101,36 @@ class AntiFlood(Enum):
     info = BotFeatureInfo(
         'Антиспам(Антифлуд) 💬',
         'Антиспам автоматически блокирует массовую отправку одинаковых '
-        'сообщений в чате'
+        'сообщений в чате(можно включить/отключить)\nDefault: Включено'
     )
-    settings = af_feat.AntiFloodSettings(
-        False, af_feat.WorkModeChoice.strict
+    settings = AntiFloodSettings(
+        False, WorkModeChoice.strict
+    )
+
+
+class MetaInfoDelete(Enum):
+    info = BotFeatureInfo(
+        'Очистка метаинформаций 🗑️',
+        'Очистка метаинформаций с чата(приход/уход/фото группы)\n'
+        'Можно включить/выключить\nDefault: Включено'
+    )
+    settings = FeatureSettings(
+        True
+    )
+
+
+class SilenceMode(Enum):
+    info = BotFeatureInfo(
+        'Тихий режим 🤫',
+        'Функция отключения служебных сообщений бота в группе о его действиях'
+        '\nDefault: Включено'
+    )
+    settings = FeatureSettings(
+        True
     )
 
 
 class FeaturesList(Enum):
     anti_flood = AntiFlood
+    meta_info_delete = MetaInfoDelete
+    silence_mode = SilenceMode

@@ -57,7 +57,7 @@ async def confirm_delete_user_callback(
                 await BotClient.delete(session, {'tg_id': field_id})
             for subscribe in user_subs:
                 redis_db_obj = RedisTgBotSettings(
-                    subscribe.client_id, subscribe.group_id,
+                    subscribe.group_id,
                     subscribe.bot_settings
                 )
                 await redis.delete(redis_db_obj.db_settings_key)

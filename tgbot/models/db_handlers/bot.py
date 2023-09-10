@@ -15,11 +15,11 @@ async def load_bot_settings_redis(pg_session: AsyncSession, redis: Redis):
     )
     for bot in groups_bot:
         redis_settings = RedisTgBotSettings(
-            bot.client_id, bot.group_id, bot.bot_settings
+            bot.group_id, bot.bot_settings
         )
         await redis_settings.set_settings(redis)
     for bot2 in admins_bot:
         redis_settings = RedisTgBotSettings(
-            bot2.admin_id, bot2.group_id, bot2.bot_settings
+            bot2.group_id, bot2.bot_settings
         )
         await redis_settings.set_settings(redis)

@@ -8,6 +8,8 @@ from environs import Env
 class Miscellaneous:
     BASE_DIR: Path = Path(__file__).parent.parent
     TARIFF_TRIAL_DAYS: int = 5
+    STATIC_DIR: Path = BASE_DIR / 'tgbot/static'
+    OBSCENE_WORDS_FILE: Path = STATIC_DIR / 'mat.txt'
 
 
 @dataclass(frozen=True)
@@ -21,22 +23,6 @@ class DbConfig:
 
     def async_url(self):
         raise NotImplementedError
-
-
-@dataclass(frozen=True)
-class TgBot:
-    token: str
-    admin_ids: list[int]
-    use_redis: bool
-    SUBSCRIBE_PAYMENT_PROVIDER_TOKEN: str
-    PAYMENTS_CURRENCY: str = 'RUB'
-
-
-@dataclass(frozen=True)
-class Config:
-    tg_bot: TgBot
-    db: DbConfig
-    misc: Miscellaneous
 
 
 @dataclass(frozen=True)
@@ -63,6 +49,22 @@ class RedisDbConfig(DbConfig):
 
     def sync_url(self):
         return f'redis://{self.host}:{self.port}/{self.database}'
+
+
+@dataclass(frozen=True)
+class TgBot:
+    token: str
+    admin_ids: list[int]
+    use_redis: bool
+    SUBSCRIBE_PAYMENT_PROVIDER_TOKEN: str
+    PAYMENTS_CURRENCY: str = 'RUB'
+
+
+@dataclass(frozen=True)
+class Config:
+    tg_bot: TgBot
+    db: DbConfig
+    misc: Miscellaneous
 
 
 def load_db_config(path: str | Path = None) -> PostgresDbConfig:

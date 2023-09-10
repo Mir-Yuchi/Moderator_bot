@@ -78,7 +78,7 @@ async def add_chat(message: Message):
                 return
     redis: Redis = message.bot['redis_db']
     rdb_obj = RedisTgBotSettings(
-        message.from_user.id, message.chat.id, settings
+        message.chat.id, settings
     )
     await rdb_obj.set_settings(redis)
     await message.answer('👌👌')

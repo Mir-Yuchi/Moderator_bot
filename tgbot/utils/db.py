@@ -32,7 +32,7 @@ class DbManager(metaclass=Singleton):
 
 class AsyncDbManager(metaclass=Singleton):
 
-    def __init__(self, db_dsn: str = '', echo: bool = True):
+    def __init__(self, db_dsn: str = '', echo: bool = False):
         self.engine = sa_async.create_async_engine(db_dsn, echo=echo)
         self.session = sa_async.async_sessionmaker(self.engine)
 
