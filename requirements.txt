@@ -20,7 +20,9 @@ MarkupSafe==2.1.3
 marshmallow==3.20.1
 multidict==6.0.4
 packaging==23.1
+Pillow==10.0.0
 psycopg2-binary==2.9.7
+pytesseract==0.3.10
 python-dotenv==1.0.0
 pytz==2023.3
 rapidfuzz==3.2.0

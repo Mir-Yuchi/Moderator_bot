@@ -153,9 +153,21 @@ class FilterWords(Enum):
     )
 
 
+class FilterMedia(Enum):
+    info = BotFeatureInfo(
+        'Фильтрация по картинкам 🖼️',
+        'Удаление картинок с незензурными/запрещенными словами'
+        '\nDefault: Включено'
+    )
+    settings = FeatureSettings(
+        True
+    )
+
+
 class FeaturesList(Enum):
     anti_flood = AntiFlood
     meta_info_delete = MetaInfoDelete
     silence_mode = SilenceMode
     obscene_delete = ObsceneDelete
     filter_words = FilterWords
+    filter_media = FilterMedia

@@ -1,5 +1,5 @@
 from aiogram import Dispatcher
-from aiogram.types import Message, ChatType
+from aiogram.types import Message, ChatType, ChatPermissions
 from redis.asyncio import Redis
 
 from tgbot.data.bot_features import FeaturesList
@@ -7,14 +7,25 @@ from tgbot.models.bot import RedisTgBotSettings
 
 
 async def delete_filter_words(message: Message):
+    chat_admins = await message.chat.get_administrators()
+    for admin in chat_admins:
+        if admin.user.id == message.from_user.id:
+            return
     redis: Redis = message.bot['redis_db']
     settings = await RedisTgBotSettings(
         message.chat.id
     ).load_settings(redis)
     silence_settings = settings[FeaturesList.silence_mode.name]
     if not silence_settings['on']:
-        await message.reply('Запрещёнку кидаешь, сука??')
+        await message.reply('Запрещённое сообщение удалено')
     await message.delete()
+    await message.bot.restrict_chat_member(
+        message.chat.id,
+        message.from_user.id,
+        ChatPermissions(False, False, False, False, False, False,
+                        False, False, False, False, False, False,
+                        False, False, False)
+    )
 
 
 def register_filter_words_handlers(dp: Dispatcher):

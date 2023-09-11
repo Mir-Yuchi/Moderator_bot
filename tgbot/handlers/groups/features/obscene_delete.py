@@ -6,6 +6,7 @@ from redis.asyncio import Redis
 from tgbot.config import Config
 from tgbot.data.bot_features import FeaturesList
 from tgbot.models.bot import RedisTgBotSettings
+from tgbot.utils.file import detect_obvious_word
 from tgbot.utils.text import replace_word_letters
 
 
@@ -17,20 +18,11 @@ async def delete_obscene(message: Message):
     ).load_settings(redis)
     silent_mode = settings[FeaturesList.silence_mode.name]['on']
     phrase = replace_word_letters(message.text.lower().replace(' ', ''))
-    with open(config.misc.OBSCENE_WORDS_FILE, encoding='utf-8') as file:
-        for word in file:
-            found_word = False
-            for part in range(len(phrase)):
-                fragment = phrase[part: part + len(word)]
-                distance = ratio(fragment, word)
-                if distance >= .75:
-                    if not silent_mode:
-                        await message.reply('Маты запрещены в чате 👮🏻')
-                    found_word = True
-                    break
-            if found_word:
-                await message.delete()
-                break
+    check_word = detect_obvious_word(config.misc.OBSCENE_WORDS_FILE, phrase)
+    if check_word:
+        if not silent_mode:
+            await message.reply('Маты запрещены в чате 👮🏻')
+        await message.delete()
 
 
 def register_obscene_handlers(dp: Dispatcher):
