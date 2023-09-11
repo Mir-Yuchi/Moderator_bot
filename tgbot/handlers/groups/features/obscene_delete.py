@@ -15,7 +15,7 @@ async def delete_obscene(message: Message):
     settings = await RedisTgBotSettings(
         message.chat.id
     ).load_settings(redis)
-    silent_mode = settings[FeaturesList.silence_mode.name]
+    silent_mode = settings[FeaturesList.silence_mode.name]['on']
     phrase = replace_word_letters(message.text.lower().replace(' ', ''))
     with open(config.misc.OBSCENE_WORDS_FILE, encoding='utf-8') as file:
         for word in file:
@@ -23,8 +23,8 @@ async def delete_obscene(message: Message):
             for part in range(len(phrase)):
                 fragment = phrase[part: part + len(word)]
                 distance = ratio(fragment, word)
-                if distance >= .7:
-                    if not silent_mode['on']:
+                if distance >= .75:
+                    if not silent_mode:
                         await message.reply('Маты запрещены в чате 👮🏻')
                     found_word = True
                     break

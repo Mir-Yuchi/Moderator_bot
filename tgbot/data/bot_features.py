@@ -5,6 +5,7 @@ from tgbot.interfaces.features.antiflood import (
     AntiFloodSettings,
     WorkModeChoice
 )
+from tgbot.interfaces.features.filter_words import FilterWordsSettings
 
 
 # FEATURES = [
@@ -141,8 +142,20 @@ class ObsceneDelete(Enum):
     )
 
 
+class FilterWords(Enum):
+    info = BotFeatureInfo(
+        'Фильтрация по словам ♼',
+        'Ник пользователей фильтруется по стоп словам которых вы вводите'
+        '\nDefault: Выключено'
+    )
+    settings = FilterWordsSettings(
+        False, []
+    )
+
+
 class FeaturesList(Enum):
     anti_flood = AntiFlood
     meta_info_delete = MetaInfoDelete
     silence_mode = SilenceMode
     obscene_delete = ObsceneDelete
+    filter_words = FilterWords

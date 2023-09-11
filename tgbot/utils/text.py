@@ -45,10 +45,27 @@ def confirm_create_tariff(
     return '\n'.join(txt)
 
 
+def word_repeat_letters_replace(word: str) -> str:
+    replace_txt = ''
+    last = ''
+    for idx, letter in enumerate(word):
+        if letter == last:
+            replace_txt += letter
+        else:
+            last = letter
+            if len(replace_txt) > 1:
+                word = word.replace(replace_txt, '')
+            replace_txt = ''
+    else:
+        if len(replace_txt) == 1:
+            word = word[::-1].replace(replace_txt, '')[::-1]
+    return word.replace(replace_txt, '')
+
+
 def replace_word_letters(word: str) -> str:
     for key, value in REPLACE_LETTERS.items():
         for letter in value:
-            for phr in word:
-                if letter == phr:
-                    word = word.replace(phr, key)
-    return word
+            if letter in word:
+                word = word.replace(letter, key)
+    replaced = word_repeat_letters_replace(word)
+    return replaced

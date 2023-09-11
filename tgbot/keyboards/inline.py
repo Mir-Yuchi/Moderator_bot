@@ -72,3 +72,12 @@ def make_features_inline_kb(group_id: int) -> InlineKeyboardMarkup:
             feature_name, callback_data=f'{group_id}__{feature_obj_name}'
         ))
     return keyboard
+
+
+def make_enumerate_inline_kb(fields: list[Any]) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup()
+    for idx, value in enumerate(fields):
+        keyboard.add(InlineKeyboardButton(
+            value, callback_data=idx.__str__()
+        ))
+    return keyboard

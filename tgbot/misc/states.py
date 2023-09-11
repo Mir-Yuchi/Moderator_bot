@@ -28,3 +28,5 @@ class FeatureSettingsState(StatesGroup):
     group_id = State()
     feature_settings = State()
     set_settings = State()
+    add_word_list = State()
+    delete_word_list = State()
