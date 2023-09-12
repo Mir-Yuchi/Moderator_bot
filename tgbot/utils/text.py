@@ -1,8 +1,16 @@
+from enum import EnumMeta
 from typing import Iterable
+
+from aiogram.utils.markdown import hcode
 
 from tgbot.data.bot_features import FeaturesList
 from tgbot.data.db_field_names import TARIFF_FIELD_NAMES
 from tgbot.data.letters import REPLACE_LETTERS
+
+
+def commands_txt_info(commands_enum: EnumMeta):
+    for key, value in commands_enum.__members__.items():
+        yield f'/{key}: {hcode(value.value)}'
 
 
 def numerate_iterable(iterable: Iterable, start: int = 1) -> tuple:

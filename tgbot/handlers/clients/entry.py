@@ -7,8 +7,10 @@ from aiogram.types import (
 from tgbot.config import Config
 from tgbot.data.commands import Commands, ButtonCommands
 from tgbot.keyboards.inline import make_groups_inline_kb
-from tgbot.keyboards.reply import USER_START_COMMANDS, USER_GROUP_COMMANDS, \
+from tgbot.keyboards.reply import (
+    USER_START_COMMANDS, USER_GROUP_COMMANDS,
     ADMIN_GROUP_COMMANDS
+)
 from tgbot.misc.states import GroupsMenuState
 from tgbot.models.admin import AdminGroupBot
 from tgbot.models.client import BotClient, ClientSubscribe

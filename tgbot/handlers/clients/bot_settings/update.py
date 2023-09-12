@@ -97,7 +97,7 @@ async def set_settings_callback(callback: CallbackQuery, state: FSMContext):
         if feature_option_value == 'add':
             await callback.bot.send_message(
                 callback.from_user.id,
-                'Отлично! Введите стоп-слово'
+                'Отлично! Введите стоп-слова разделённые через запятую'
             )
             await FeatureSettingsState.add_word_list.set()
         else:
@@ -172,7 +172,10 @@ async def add_word(message: Message, state: FSMContext):
                 session,
                 {'group_id': group_id, 'admin_id': message.from_user.id}
             )
-    client_sub.bot_settings[feature_name]['words_list'].append(message.text)
+    for word in message.text.split(','):
+        client_sub.bot_settings[feature_name]['words_list'].append(
+            word.strip()
+        )
     rdb_obj = RedisTgBotSettings(group_id, client_sub.bot_settings)
     await rdb_obj.set_settings(redis)
     async with AsyncDbManager().db_session() as session:

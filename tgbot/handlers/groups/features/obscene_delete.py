@@ -1,4 +1,3 @@
-from Levenshtein import ratio
 from aiogram import Dispatcher
 from aiogram.types import Message, ChatType
 from redis.asyncio import Redis
@@ -6,10 +5,12 @@ from redis.asyncio import Redis
 from tgbot.config import Config
 from tgbot.data.bot_features import FeaturesList
 from tgbot.models.bot import RedisTgBotSettings
+from tgbot.utils.decorators import only_chat_users_handler
 from tgbot.utils.file import detect_obvious_word
 from tgbot.utils.text import replace_word_letters
 
 
+@only_chat_users_handler
 async def delete_obscene(message: Message):
     config: Config = message.bot['config']
     redis: Redis = message.bot['redis_db']
