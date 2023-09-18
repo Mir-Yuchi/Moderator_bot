@@ -6,12 +6,16 @@ from aiogram.types import (
 )
 from redis.asyncio import Redis
 
+from tgbot.buttons.inline import CANCEL
 from tgbot.config import Config
 from tgbot.data.bot_features import FeaturesList
 from tgbot.data.commands import ButtonCommands
 from tgbot.interfaces.features import FeatureSettings
-from tgbot.keyboards.inline import make_features_inline_kb, \
+from tgbot.keyboards.inline import (
+    make_features_inline_kb,
     make_enumerate_inline_kb
+)
+
 from tgbot.keyboards.reply import USER_START_COMMANDS, SUPERUSER_START_COMMANDS
 from tgbot.misc.states import GroupsMenuState, FeatureSettingsState
 from tgbot.models.admin import AdminGroupBot
@@ -25,13 +29,32 @@ async def bot_settings(message: Message, state: FSMContext):
         group_id = int(data.get('choose_group'))
     await state.finish()
     await FeatureSettingsState.feature_settings.set()
+    keyboard = make_features_inline_kb(group_id)
+    keyboard.add(CANCEL)
     await message.answer(
         'Выберите фичу для настроек',
-        reply_markup=make_features_inline_kb(group_id)
+        reply_markup=keyboard
     )
 
 
 async def bot_settings_callback(callback: CallbackQuery, state: FSMContext):
+    await callback.bot.delete_message(
+        callback.from_user.id,
+        callback.message.message_id
+    )
+    config: Config = callback.bot['config']
+    admin_status = callback.from_user.id in config.tg_bot.admin_ids
+    if callback.data == 'cancel':
+        await state.finish()
+        await callback.bot.send_message(
+            callback.from_user.id,
+            'Отменено',
+            reply_markup=(
+                SUPERUSER_START_COMMANDS if admin_status
+                else USER_START_COMMANDS
+            )
+        )
+        return
     redis: Redis = callback.bot['redis_db']
     group_id, feature_name = callback.data.split('__')
     feature = getattr(FeaturesList, feature_name)
@@ -53,11 +76,8 @@ async def bot_settings_callback(callback: CallbackQuery, state: FSMContext):
     )
     for btn in buttons:
         keyboard.add(btn)
+    keyboard.add(CANCEL)
     await FeatureSettingsState.set_settings.set()
-    await callback.bot.delete_message(
-        callback.from_user.id,
-        callback.message.message_id
-    )
     await callback.bot.send_message(
         callback.from_user.id,
         '\n\n'.join(txt),
@@ -75,6 +95,17 @@ async def set_settings_callback(callback: CallbackQuery, state: FSMContext):
         callback.from_user.id,
         callback.message.message_id
     )
+    if callback.data == 'cancel':
+        await state.finish()
+        await callback.bot.send_message(
+            callback.from_user.id,
+            'Отменено',
+            reply_markup=(
+                SUPERUSER_START_COMMANDS if admin_status
+                else USER_START_COMMANDS
+            )
+        )
+        return
     async with AsyncDbManager().db_session() as session:
         if not admin_status:
             client_sub: ClientSubscribe = await ClientSubscribe.get_one(

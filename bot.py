@@ -9,6 +9,7 @@ from redis.asyncio import Redis
 from tgbot.config import load_config, load_redis_config
 from tgbot.filters import register_all_filters
 from tgbot.handlers import register_all_handlers
+from tgbot.middleware.antiflood import AntiSpamMiddleware
 from tgbot.models.db_handlers.bot import load_bot_settings_redis
 from tgbot.models.tariffs import Tariff
 from tgbot.tasks.daily import daily_check_user_subscribe, on_exit_reset_cache
@@ -53,6 +54,7 @@ async def main():
                 'limitation_days': 30,
             })
         await load_bot_settings_redis(db_session, redis_engine)
+    dp.middleware.setup(AntiSpamMiddleware())
     register_all_filters(dp)
     register_all_handlers(dp)
 

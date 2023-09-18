@@ -4,6 +4,7 @@ from redis.asyncio import Redis
 
 from tgbot.data.bot_features import FeaturesList
 from tgbot.models.bot import RedisTgBotSettings
+from tgbot.utils.file import levenstein_range
 from tgbot.utils.text import replace_word_letters
 
 
@@ -41,11 +42,13 @@ class FilterWordEqual(BoundFilter):
         ).load_settings(redis)
         filter_settings = settings[FeaturesList.filter_words.name]
         words = filter_settings['words_list']
-        phrase = replace_word_letters(message.text.lower())
+        phrase = replace_word_letters(message.text.lower().replace(' ', ''))
         if any([
             not settings,
             not self.filter_word_equal,
-            phrase not in words,
         ]):
             return False
-        return True
+        for word in words:
+            if levenstein_range(word, phrase, .4):
+                return True
+        return False

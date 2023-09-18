@@ -66,7 +66,7 @@ def word_repeat_letters_replace(word: str) -> str:
             replace_txt = ''
     else:
         if len(replace_txt) == 1:
-            word = word[::-1].replace(replace_txt, '')[::-1]
+            word = word[-1].replace(replace_txt, '')
     return word.replace(replace_txt, '')
 
 

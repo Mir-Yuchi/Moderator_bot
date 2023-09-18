@@ -7,6 +7,12 @@ from aiogram.types import InlineKeyboardButton
 from tgbot.interfaces.features import FeatureSettings
 
 
+@dataclass
+class AntiSpamMsg:
+    msg_text: int
+    msg_id: int
+
+
 class WorkModeChoice(Enum):
     strict = 'Строгий режим'
     less_strict = 'Менее строгий режим'

@@ -130,12 +130,24 @@ def register_entry_handlers(dp: Dispatcher):
         commands_prefix='!/',
     )
     dp.register_message_handler(
+        features, text=ButtonCommands.bot_features.value,
+        chat_type=ChatType.PRIVATE
+    )
+    dp.register_message_handler(
         howto_setup, commands=[Commands.howto.name], state='*',
         commands_prefix='!/',
     )
     dp.register_message_handler(
+        howto_setup, text=ButtonCommands.howto_setup.value,
+        chat_type=ChatType.PRIVATE
+    )
+    dp.register_message_handler(
         features_detail, commands=[Commands.fdetail.name], state='*',
         commands_prefix='!/',
+    )
+    dp.register_message_handler(
+        features_detail, text=ButtonCommands.features_detail.value,
+        chat_type=ChatType.PRIVATE
     )
     dp.register_message_handler(
         user_chats, state='*', text=ButtonCommands.my_groups.value,

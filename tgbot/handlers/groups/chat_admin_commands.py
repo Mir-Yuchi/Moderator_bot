@@ -17,7 +17,8 @@ async def ban(message: Message):
 async def unban(message: Message):
     await message.bot.unban_chat_member(
         message.chat.id,
-        message.reply_to_message.from_user.id
+        message.reply_to_message.from_user.id,
+        only_if_banned=True
     )
     await message.reply(
         'Пользователь разбанен'
