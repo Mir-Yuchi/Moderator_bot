@@ -29,4 +29,3 @@ class FeatureSettingsState(StatesGroup):
     feature_settings = State()
     set_settings = State()
     add_word_list = State()
-    delete_word_list = State()

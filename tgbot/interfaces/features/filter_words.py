@@ -15,10 +15,7 @@ class FilterWordsSettings(FeatureSettings):
     ) -> list[InlineKeyboardButton]:
         buttons = super().make_inline_keyboard_buttons(settings)
         buttons.append(InlineKeyboardButton(
-            'Добавить стоп слово ➕', callback_data='words_list__add'
-        ))
-        buttons.append(InlineKeyboardButton(
-            'Удалить стоп слово ➖', callback_data='words_list__delete'
+            'Заменить список стоп слов ➕', callback_data='words_list__add'
         ))
         return buttons
 

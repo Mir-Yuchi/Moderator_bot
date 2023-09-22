@@ -22,7 +22,7 @@ class WorkModeChoice(Enum):
 class AntiFloodSettings(FeatureSettings):
     work_mode: WorkModeChoice
 
-    def features_text_dict(self, settings: dict[Any]):
+    def features_text_dict(self, settings: dict[Any]) -> dict:
         data = super().features_text_dict(settings)
         work_mode = settings['work_mode']
         mode = getattr(WorkModeChoice, work_mode)
@@ -30,13 +30,13 @@ class AntiFloodSettings(FeatureSettings):
             'Режим работы 🛠️': mode.value
         }
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         data = super().to_dict()
         return data | {
             'work_mode': self.work_mode.name
         }
 
-    def set_settings(self, setting_name: str, setting_value: str):
+    def set_settings(self, setting_name: str, setting_value: str) -> None:
         setting = getattr(self, setting_name)
         if isinstance(setting, WorkModeChoice):
             settings: WorkModeChoice = getattr(WorkModeChoice, setting_value)

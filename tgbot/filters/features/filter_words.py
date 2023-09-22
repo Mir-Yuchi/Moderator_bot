@@ -42,13 +42,14 @@ class FilterWordEqual(BoundFilter):
         ).load_settings(redis)
         filter_settings = settings[FeaturesList.filter_words.name]
         words = filter_settings['words_list']
-        phrase = replace_word_letters(message.text.lower().replace(' ', ''))
+        phrases = replace_word_letters(message.text.lower()).split()
         if any([
             not settings,
             not self.filter_word_equal,
         ]):
             return False
         for word in words:
-            if levenstein_range(word, phrase, .4):
-                return True
+            for phrase in phrases:
+                if phrase == word:
+                    return True
         return False

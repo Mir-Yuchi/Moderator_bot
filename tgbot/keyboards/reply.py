@@ -17,9 +17,10 @@ USER_START_COMMANDS = ReplyKeyboardMarkup([
 ], resize_keyboard=True)
 
 USER_GROUP_COMMANDS = ReplyKeyboardMarkup([
-    [rep_btn.SUBSCRIBE_BUY, rep_btn.BOT_SETTINGS]
+    [rep_btn.SUBSCRIBE_BUY, rep_btn.BOT_SETTINGS],
+    [rep_btn.BACK_BTN]
 ], resize_keyboard=True)
 
 ADMIN_GROUP_COMMANDS = ReplyKeyboardMarkup([
-    [rep_btn.BOT_SETTINGS]
+    [rep_btn.BOT_SETTINGS, rep_btn.BACK_BTN]
 ], resize_keyboard=True)

@@ -3,16 +3,20 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import (
     Message, ChatType, CallbackQuery
 )
+from redis.asyncio import Redis
 
+from tgbot.buttons.reply import BACK_BTN
 from tgbot.config import Config
+from tgbot.data.bot_features import FeaturesList
 from tgbot.data.commands import Commands, ButtonCommands
 from tgbot.keyboards.inline import make_groups_inline_kb
 from tgbot.keyboards.reply import (
     USER_START_COMMANDS, USER_GROUP_COMMANDS,
-    ADMIN_GROUP_COMMANDS
+    ADMIN_GROUP_COMMANDS, SUPERUSER_START_COMMANDS
 )
 from tgbot.misc.states import GroupsMenuState
 from tgbot.models.admin import AdminGroupBot
+from tgbot.models.bot import RedisTgBotSettings
 from tgbot.models.client import BotClient, ClientSubscribe
 from tgbot.utils.db import AsyncDbManager
 from tgbot.utils.text import load_bot_feature_names, bot_feature_detail_info
@@ -48,8 +52,8 @@ async def user_start(message: Message):
 
 async def features(message: Message):
     inner = (
-            '\n\nЧтобы подробно узнать о каждой возможности бота, '
-            'набери команду /' + Commands.fdetail.name
+        '\n\nЧтобы подробно узнать о каждой возможности бота, '
+        'набери команду /' + Commands.fdetail.name
     )
     await message.answer('Фичи этого бота 💣💣💣\n\n' + '\n'.join(
         load_bot_feature_names()
@@ -67,7 +71,7 @@ async def howto_setup(message: Message):
         'Как установить бота на вашу группу❓\n',
         '1. Купите подписку',
         '2. Добавьте меня в группу и сделайте админом('
-        'дайте все права кроме анонимности)',
+        'дайте все права кроме анонимности и добавление админов)',
         '3. Наберите в чате команду /' + Commands.add.name,
         '4. И всё! После этого чат будет отображаться в ваших чатах, и можете '
         'наслаждаться чистым чатом 😇',
@@ -100,9 +104,25 @@ async def user_chats(message: Message):
 
 
 async def user_chats_callback(callback: CallbackQuery, state: FSMContext):
-    group_id = int(callback.data)
     config: Config = callback.bot['config']
+    rdb: Redis = callback.bot['redis_db']
     admin_user = callback.from_user.id in config.tg_bot.admin_ids
+    if callback.data == 'back':
+        await state.finish()
+        await callback.bot.send_message(
+            callback.from_user.id,
+            'Нажмите на нужную команду',
+            reply_markup=(
+                SUPERUSER_START_COMMANDS if admin_user
+                else USER_START_COMMANDS
+            )
+        )
+        await callback.bot.delete_message(
+            callback.from_user.id,
+            callback.message.message_id
+        )
+        return
+    group_id = int(callback.data)
     if admin_user:
         keyboard = ADMIN_GROUP_COMMANDS
     else:
@@ -113,9 +133,22 @@ async def user_chats_callback(callback: CallbackQuery, state: FSMContext):
         callback.from_user.id,
         callback.message.message_id
     )
+    redis_obj = RedisTgBotSettings(group_id)
+    settings = await redis_obj.load_settings(rdb)
+    txt = ''
+    for name, setting in settings.items():
+        feature = getattr(FeaturesList, name).value
+        feature_txt = f'<b>{feature.info.value.name}</b>\n'
+        feature_settings_dict: dict = (
+            feature.settings.value.features_text_dict(setting)
+        )
+        for key, value in feature_settings_dict.items():
+            feature_txt += f'{key}: {value}\n'
+        feature_txt += '\n'
+        txt += feature_txt
     await callback.bot.send_message(
         callback.from_user.id,
-        'Выберите действие',
+        f'Ваши настройки чата\n\n{txt}\nВыберите действие',
         reply_markup=keyboard
     )
 
@@ -156,4 +189,8 @@ def register_entry_handlers(dp: Dispatcher):
     dp.register_callback_query_handler(
         user_chats_callback, state=GroupsMenuState.choose_group,
         chat_type=ChatType.PRIVATE
+    )
+    dp.register_message_handler(
+        user_chats, state=GroupsMenuState.group_actions,
+        text=ButtonCommands.back.value, chat_type=ChatType.PRIVATE
     )

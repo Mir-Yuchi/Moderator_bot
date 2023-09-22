@@ -3,7 +3,7 @@ from typing import Any
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from tgbot.buttons.inline import YES, NO
+from tgbot.buttons.inline import YES, NO, BACK
 from tgbot.data.bot_features import FeaturesList
 from tgbot.models.admin import AdminGroupBot
 from tgbot.models.client import BotClient, ClientSubscribe
@@ -61,6 +61,7 @@ async def make_groups_inline_kb(
         chat = await bot.get_chat(group.group_id)
         btn = InlineKeyboardButton(chat.full_name, callback_data=str(chat.id))
         keyboard.add(btn)
+    keyboard.add(BACK)
     return keyboard
 
 
@@ -71,6 +72,9 @@ def make_features_inline_kb(group_id: int) -> InlineKeyboardMarkup:
         keyboard.add(InlineKeyboardButton(
             feature_name, callback_data=f'{group_id}__{feature_obj_name}'
         ))
+    keyboard.add(InlineKeyboardButton(
+        BACK.text, callback_data=f'{group_id}__back'
+    ))
     return keyboard
 
 
