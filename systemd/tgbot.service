@@ -1,13 +1,13 @@
 [Unit]
-Description=Course Bot
+Description=Antiflood guard
 After=network.target
 
 [Service]
-User=tgbot
-Group=tgbot
+User=antiflood
+Group=antiflood
 Type=simple
-WorkingDirectory=/opt/tgbot
-ExecStart=/opt/tgbot/venv/bin/python bot.py
+WorkingDirectory=/home/antiflood/antiflood-guard-bot
+ExecStart=/home/antiflood/antiflood-guard-bot/env/bin/python3.11 bot.py
 Restart=always
 
 [Install]
