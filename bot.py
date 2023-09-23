@@ -58,7 +58,6 @@ async def main():
     register_all_filters(dp)
     register_all_handlers(dp)
 
-    # start
     try:
         # for admin in config.tg_bot.admin_ids:
         #     await bot.send_message(admin, 'Бот запустился')

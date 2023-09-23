@@ -167,6 +167,45 @@ async def set_settings_callback(callback: CallbackQuery, state: FSMContext):
             )
             await FeatureSettingsState.add_word_list.set()
         return
+    elif feature_option_name == 'log_chat':
+        if feature_option_value == 'add':
+            await callback.bot.send_message(
+                callback.from_user.id,
+                'Введите 🆔 лог чата'
+            )
+            await FeatureSettingsState.set_log_chat_id.set()
+            return
+        else:
+            await state.finish()
+            rdb_obj = RedisTgBotSettings(group_id, client_sub.bot_settings)
+            settings = await rdb_obj.load_settings(redis)
+            settings[FeaturesList.log_chat.name]['group_id'] = None
+            rdb_obj.settings = settings
+            await rdb_obj.set_settings(redis)
+            async with AsyncDbManager().db_session() as session:
+                if not admin_status:
+                    await ClientSubscribe.update(
+                        session,
+                        {'group_id': group_id,
+                         'client_id': callback.from_user.id},
+                        {'bot_settings': settings}
+                    )
+                else:
+                    await AdminGroupBot.update(
+                        session,
+                        {'group_id': group_id,
+                         'admin_id': callback.from_user.id},
+                        {'bot_settings': settings}
+                    )
+            await callback.bot.send_message(
+                callback.from_user.id,
+                'Успешно удалил лог чат',
+                reply_markup=(
+                    SUPERUSER_START_COMMANDS if admin_status
+                    else USER_START_COMMANDS
+                )
+            )
+            return
     else:
         client_sub.bot_settings[feature_name][feature_option_name] = (
             feature_option_value
@@ -243,6 +282,48 @@ async def add_word(message: Message, state: FSMContext):
     )
 
 
+async def add_log_chat(message: Message, state: FSMContext):
+    if message.text.startswith('-'):
+        check_txt = message.text[1:]
+    else:
+        check_txt = message.text
+    if not check_txt.isdecimal():
+        await message.answer('Вы ввели не ID')
+        return
+    async with state.proxy() as data:
+        group_id = data['group_id']
+    chat_id = int(message.text)
+    redis = message.bot['redis_db']
+    config = message.bot['config']
+    rdb = RedisTgBotSettings(group_id)
+    settings = await rdb.load_settings(redis)
+    settings[FeaturesList.log_chat.name]['group_id'] = chat_id
+    rdb.settings = settings
+    await rdb.set_settings(redis)
+    admin_status = message.from_user.id in config.tg_bot.admin_ids
+    async with AsyncDbManager().db_session() as session:
+        if admin_status:
+            await AdminGroupBot.update(
+                session,
+                {'group_id': group_id, 'admin_id': message.from_user.id},
+                {'bot_settings': settings}
+            )
+        else:
+            await ClientSubscribe.update(
+                session,
+                {'group_id': group_id, 'client_id': message.from_user.id},
+                {'bot_settings': settings}
+            )
+    await state.finish()
+    await message.answer(
+        'Успешно привязал лог чат',
+        reply_markup=(
+            SUPERUSER_START_COMMANDS if admin_status
+            else USER_START_COMMANDS
+        )
+    )
+
+
 def register_features_update_handlers(dp: Dispatcher):
     dp.register_message_handler(
         bot_settings, chat_type=ChatType.PRIVATE,
@@ -260,4 +341,8 @@ def register_features_update_handlers(dp: Dispatcher):
     dp.register_message_handler(
         add_word, chat_type=ChatType.PRIVATE,
         state=FeatureSettingsState.add_word_list
+    )
+    dp.register_message_handler(
+        add_log_chat, chat_type=ChatType.PRIVATE,
+        state=FeatureSettingsState.set_log_chat_id
     )

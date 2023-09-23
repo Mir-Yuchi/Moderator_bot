@@ -75,6 +75,18 @@ class FilterMedia(Enum):
     )
 
 
+class LogChat(Enum):
+    info = BotFeatureInfo(
+        'Лог чат 🗨️',
+        'Вся информация о банах/блокировках отображаются там.\n'
+        'Также там можно будет разблокировать/блокировать пользователей\n'
+        'Default: Выключено'
+    )
+    settings = LogChatSettings(
+        False
+    )
+
+
 class FeaturesList(Enum):
     anti_flood = AntiFlood
     meta_info_delete = MetaInfoDelete
@@ -82,3 +94,4 @@ class FeaturesList(Enum):
     obscene_delete = ObsceneDelete
     filter_words = FilterWords
     filter_media = FilterMedia
+    log_chat = LogChat

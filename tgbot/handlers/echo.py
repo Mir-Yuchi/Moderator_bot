@@ -36,10 +36,26 @@ async def bot_commands_help(message: Message):
     )
 
 
+async def howto_log_chat(message: Message):
+    await message.answer(
+        '<b>Как привязать лог чат ❓</b>\n'
+        'В чате где админит этот бот наберите команду /' +
+        ChatAdminCommands.chat.name + ' чтобы узнать ID чата, дальше в ' +
+        'настройках привяжите этот ID к чату\n'
+        '<b>❗❗❗ ВНИМАНИЕ ❗❗❗</b>\n1.Бот в лог чате должен быть админом\n'
+        '2.В лог чате те кто принимают решение тоже должны быть админами\n'
+        '3.Чат который админит этот бот должен быть супергруппой'
+    )
+
+
 def register_echo(dp: Dispatcher):
     dp.register_message_handler(
         bot_commands_help, chat_type=ChatType.PRIVATE,
         text=ButtonCommands.help_commands.value
+    )
+    dp.register_message_handler(
+        howto_log_chat, chat_type=ChatType.PRIVATE,
+        text=ButtonCommands.howto_log_chat.value
     )
     dp.register_message_handler(bot_echo_all, state="*",
                                 content_types=ContentTypes.ANY,

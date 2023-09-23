@@ -6,22 +6,23 @@ from tgbot.data.bot_features import FeaturesList
 from tgbot.models.bot import RedisTgBotSettings
 
 
-class MetaDeleteActive(BoundFilter):
-    key = 'meta_delete_active'
+class MediaActive(BoundFilter):
+    key = 'media_delete_active'
 
-    def __init__(self, meta_delete_active: bool):
-        self.meta_delete_active = meta_delete_active
+    def __init__(self, media_delete_active: bool):
+        self.media_delete_active = media_delete_active
 
     async def check(self, message: Message) -> bool:
         redis: Redis = message.bot['redis_db']
-        model = RedisTgBotSettings(message.chat.id)
-        settings: dict | None = await model.load_settings(redis)
+        settings = await RedisTgBotSettings(
+            message.chat.id
+        ).load_settings(redis)
         if not settings:
             return False
-        meta_settings: dict = settings[FeaturesList.meta_info_delete.name]
+        media_settings = settings[FeaturesList.filter_media.name]
         if any([
-            not self.meta_delete_active,
-            not meta_settings['on']
+            not media_settings['on'],
+            not self.media_delete_active,
         ]):
             return False
         return True

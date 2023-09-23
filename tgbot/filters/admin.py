@@ -1,7 +1,7 @@
 import typing
 
 from aiogram.dispatcher.filters import BoundFilter
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from tgbot.config import Config
 
@@ -27,10 +27,13 @@ class ChatAdminFilter(BoundFilter):
     def __init__(self, chat_admin: typing.Optional[bool] = None):
         self.chat_admin = chat_admin
 
-    async def check(self, message: Message):
+    async def check(self, message: Message | CallbackQuery):
         if self.chat_admin is None:
             return False
-        chat_admins = await message.chat.get_administrators()
+        if isinstance(message, Message):
+            chat_admins = await message.chat.get_administrators()
+        else:
+            chat_admins = await message.message.chat.get_administrators()
         return message.from_user.id in map(
             lambda obj: obj.user.id,
             chat_admins

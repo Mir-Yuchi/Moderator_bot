@@ -19,9 +19,10 @@ class FilterWordsActive(BoundFilter):
         settings = await RedisTgBotSettings(
             message.chat.id
         ).load_settings(redis)
+        if not settings:
+            return False
         filter_settings = settings[FeaturesList.filter_words.name]
         if any([
-            not settings,
             not self.filter_words_active,
             not filter_settings['on']
         ]):

@@ -85,3 +85,24 @@ def make_enumerate_inline_kb(fields: list[Any]) -> InlineKeyboardMarkup:
             value, callback_data=idx.__str__()
         ))
     return keyboard
+
+
+def make_user_actions_log(user_id: int, chat_id: int) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton(
+        'Заглушить пользователя 🔇',
+        callback_data=f'ro__{user_id}__{chat_id}'
+    ))
+    keyboard.add(InlineKeyboardButton(
+        'Размютить пользователя 🔈',
+        callback_data=f'unro__{user_id}__{chat_id}'
+    ))
+    keyboard.add(InlineKeyboardButton(
+        'Банить пользователя 🚫',
+        callback_data=f'ban__{user_id}__{chat_id}'
+    ))
+    keyboard.add(InlineKeyboardButton(
+        'Разбанить пользователя ✅',
+        callback_data=f'unban__{user_id}__{chat_id}'
+    ))
+    return keyboard

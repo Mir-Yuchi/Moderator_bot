@@ -45,6 +45,12 @@ async def unro(message: Message):
     await message.reply('Пользователь снова может написать сообщения')
 
 
+async def chat_id_get(message: Message):
+    await message.reply(
+        'ID чата: ' + message.chat.id.__str__()
+    )
+
+
 def register_chat_admin_commands(dp: Dispatcher):
     dp.register_message_handler(
         ban, chat_admin=True, commands=[ChatAdminCommands.ban.name],
@@ -60,5 +66,9 @@ def register_chat_admin_commands(dp: Dispatcher):
     )
     dp.register_message_handler(
         unro, chat_admin=True, commands=[ChatAdminCommands.unro.name],
+        chat_type=[ChatType.GROUP, ChatType.SUPERGROUP]
+    )
+    dp.register_message_handler(
+        chat_id_get, chat_admin=True, commands=[ChatAdminCommands.chat.name],
         chat_type=[ChatType.GROUP, ChatType.SUPERGROUP]
     )

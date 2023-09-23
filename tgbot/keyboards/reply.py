@@ -7,13 +7,13 @@ SUPERUSER_START_COMMANDS = ReplyKeyboardMarkup([
     [rep_btn.USERS_LIST, rep_btn.DELETE_USER],
     [rep_btn.USER_GROUPS, rep_btn.HELP_COMMANDS],
     [rep_btn.HOWTO_SETUP, rep_btn.FEATURES_DETAIL],
-    [rep_btn.BOT_FEATURES]
+    [rep_btn.BOT_FEATURES, rep_btn.LOG_CHAT]
 ], resize_keyboard=True)
 
 USER_START_COMMANDS = ReplyKeyboardMarkup([
     [rep_btn.USER_GROUPS, rep_btn.HELP_COMMANDS],
     [rep_btn.HOWTO_SETUP, rep_btn.FEATURES_DETAIL],
-    [rep_btn.BOT_FEATURES]
+    [rep_btn.BOT_FEATURES, rep_btn.LOG_CHAT]
 ], resize_keyboard=True)
 
 USER_GROUP_COMMANDS = ReplyKeyboardMarkup([

@@ -2,6 +2,7 @@ from aiogram.dispatcher.filters import BoundFilter
 from aiogram.types import Message
 from redis.asyncio import Redis
 
+from tgbot.data.bot_features import FeaturesList
 from tgbot.models.bot import RedisTgBotSettings
 
 
