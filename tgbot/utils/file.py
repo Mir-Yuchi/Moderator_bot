@@ -16,7 +16,7 @@ def detect_obvious_word(obscene_words_file_path: str | Path,
     with open(obscene_words_file_path, encoding='utf-8') as file:
         for word in file:
             if len(word) <= 6:
-                percent = .90
+                percent = .80
             if levenstein_range(phrase, word, percent):
                 return True
     return False

@@ -38,7 +38,7 @@ async def delete_obscene(message: Message):
                 f'<b>ЧАТ</b>\n🆔: {chat_info.id}\n'
                 f'Название: {chat_info.full_name}\n'
                 f'<b>Пользователь</b>\n'
-                f'{mention_user}\nСлово: {check_word}',
+                f'{mention_user}\nСлово: {check_word}\nСтатус: Не заглушен',
                 reply_markup=make_user_actions_log(
                     message.from_user.id,
                     message.chat.id

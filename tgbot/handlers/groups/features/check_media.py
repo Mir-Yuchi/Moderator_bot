@@ -31,9 +31,11 @@ async def check_media(message: Message):
             message.document.file_id
         )
     reader = easyocr.Reader(['ru'], False)
+    print('reader conf')
     text_list: list[str] = reader.readtext(
         file.read(), detail=False, paragraph=True
     )
+    print('detact words')
     for text in text_list:
         text = text.lower().strip()
         check_word = detect_obvious_word(
@@ -71,7 +73,7 @@ async def check_media(message: Message):
                     f'<b>ЧАТ</b>\n🆔: {chat_info.id}\n'
                     f'Название: {chat_info.full_name}\n'
                     f'<b>Пользователь</b>\n'
-                    f'{mention_user}',
+                    f'{mention_user}\nСтатус: Заглушен',
                     reply_markup=make_user_actions_log(
                         message.from_user.id,
                         message.chat.id
