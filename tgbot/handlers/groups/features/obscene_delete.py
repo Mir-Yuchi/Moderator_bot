@@ -19,7 +19,7 @@ async def delete_obscene(message: Message):
         message.chat.id
     ).load_settings(redis)
     silent_mode = settings[FeaturesList.silence_mode.name]['on']
-    phrase = replace_word_letters(message.text.lower().replace(' ', ''))
+    phrase = replace_word_letters(message.text.lower())
     check_word = detect_obvious_word(config.misc.OBSCENE_WORDS_FILE, phrase)
     if check_word:
         if not silent_mode:
