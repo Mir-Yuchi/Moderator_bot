@@ -3,7 +3,7 @@ from pathlib import Path
 from Levenshtein import ratio
 
 
-def levenstein_range(phrase: str, word: str, percent: float = .40):
+def levenstein_range(phrase: str, word: str, percent: float = .0):
     for part in range(len(phrase)):
         fragment = phrase[part: part + len(word)]
         distance = ratio(fragment, word)
