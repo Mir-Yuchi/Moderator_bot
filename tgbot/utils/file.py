@@ -12,18 +12,18 @@ def levenstein_range(phrase: str, word: str, percent: float = .40):
 
 
 def detect_obvious_word(obscene_words_file_path: str | Path,
-                        phrase: str, percent: float = .40) -> bool:
+                        phrase: str, percent: float = .0) -> bool:
     with open(obscene_words_file_path, encoding='utf-8') as file:
         for word in file:
-            if len(word) <= 4:
-                percent = .40
+            if len(word) <= 0:
+                percent = .0
             if levenstein_range(phrase, word, percent):
                 return True
     return False
 
 
 def detect_obv_list_word(word_list: list[str], text: str,
-                         percent: float = .4) -> bool:
+                         percent: float = .0) -> bool:
     for word in word_list:
         for part in range(len(text)):
             fragment = text[part: part + len(word)]
